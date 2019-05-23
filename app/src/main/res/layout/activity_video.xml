@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#484A4B"
+    tools:context="com.example.dervis.autonomous.Activities.VideoActivity">
+
+    <include
+        android:id="@+id/toolbarInfotivVideo"
+        layout="@layout/toolbar_infotiv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/carGoggle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/todo"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarInfotivVideo"
+        app:srcCompat="@drawable/battery" />
+
+    <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/joyStick"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        custom:JV_backgroundColor="#FFD8C4"
+        custom:JV_backgroundSizeRatio="65%"
+        custom:JV_borderColor="#f4ab86"
+        custom:JV_borderWidth="4dp"
+        custom:JV_buttonColor="#FF6E40"
+        custom:JV_buttonSizeRatio="35%"
+        custom:JV_fixedCenter="false"
+        custom:layout_constraintBottom_toBottomOf="parent"
+        custom:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:onClick="clickedOnOff"
+        android:text="On/Off"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

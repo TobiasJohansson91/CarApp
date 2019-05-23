@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/infotivLightGray">
+
+    <ImageView
+        android:id="@+id/iconBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/diagnosticTextView"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/infotivbehindIcons" />
+
+    <ImageView
+        android:id="@+id/iconDiaImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/infotivbehindIcons"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/position" />
+
+    <TextView
+        android:id="@+id/diagnosticTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_thin"
+        android:text="TextView"
+        android:textAllCaps="false"
+        android:textColor="@color/infotivWhite"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/iconDiaImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="6dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/infotivOrange" />
+
+    <TextView
+        android:id="@+id/descriptionControlTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_thin"
+        android:text="TextView"
+        android:textColor="@color/infotivWhite"
+        app:layout_constraintStart_toStartOf="@+id/diagnosticTextView"
+        app:layout_constraintTop_toBottomOf="@+id/diagnosticTextView" />
+
+    <com.suke.widget.SwitchButton
+        android:id="@+id/controlSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sb_background="@color/infotivDarkGray"
+        app:sb_uncheck_color="@color/infotivDarkGray"
+        app:sb_checked_color="@color/infotivOrange"
+        app:sb_uncheckcircle_color="@color/infotivDarkGray"
+        app:sb_checkline_color="@color/infotivOrange"/>
+
+</android.support.constraint.ConstraintLayout>

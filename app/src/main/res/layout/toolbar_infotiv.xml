@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarInfotivIncluder"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="?attr/colorPrimary"
+        android:contentInsetStart="0dp"
+        android:contentInsetLeft="0dp"
+        android:contentInsetEnd="0dp"
+        android:contentInsetRight="0dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="16dp">
+
+            <ImageButton
+                android:id="@+id/backArrowBtn"
+                android:layout_width="25dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:onClick="clickBackArrow"
+                android:rotation="180"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/arrow_white_back" />
+
+            <ImageView
+                android:id="@+id/logoInfotiv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/infotiv_logo_white" />
+
+            <ImageView
+                android:id="@+id/connectCarImageButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:onClick="clickConnectCar"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_car_connect" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+</android.support.constraint.ConstraintLayout>
