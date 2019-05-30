@@ -11,12 +11,16 @@ import com.example.dervis.autonomous.CarRequest.CommandRunnable;
 import com.example.dervis.autonomous.CarRequest.SocketCallback;
 import com.example.dervis.autonomous.CarRequest.SubscriberRunnable;
 import com.example.dervis.autonomous.CarRequest.ZMQSocketFactory;
+import com.example.dervis.autonomous.Constants.ConnectedStatus;
 import com.example.dervis.autonomous.Constants.Filters;
 import com.example.dervis.autonomous.Constants.IPAdresses;
 import com.example.dervis.autonomous.Constants.Sockets;
 import com.example.dervis.autonomous.ICommandCallback;
 import com.example.dervis.autonomous.Objects.BatteryObj;
+import com.example.dervis.autonomous.Objects.ConnectedSocketObj;
+import com.example.dervis.autonomous.Objects.LidarObj;
 import com.example.dervis.autonomous.Objects.SocketObj;
+import com.example.dervis.autonomous.Objects.SonarObj;
 import com.example.dervis.autonomous.Objects.WheelSpeedObj;
 import com.example.dervis.autonomous.Ping;
 
@@ -35,34 +39,26 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
     private MutableLiveData<WheelSpeedObj> speed = new MutableLiveData<>();
     private MutableLiveData<BatteryObj> battery  = new MutableLiveData<>();
     private MutableLiveData<Bitmap> image  = new MutableLiveData<>();
+    private MutableLiveData<Integer> compass = new MutableLiveData<>();
+    private MutableLiveData<LidarObj> lidar  = new MutableLiveData<>();
+    private MutableLiveData<SonarObj> sonar  = new MutableLiveData<>();
+    private MutableLiveData<ConnectedSocketObj> connectedSocket = new MutableLiveData<>();
 
     private ExecutorService threadPool = Executors.newFixedThreadPool(6, Executors.defaultThreadFactory());
     private HashMap<String, ZMQ.Socket> subSockets = new HashMap<>();
     private ArrayList<SubscriberRunnable> runningProcesses = new ArrayList<>();
     private CommandRunnable commandRunnable;
-    private int viewFlag;
+    private List<SocketObj> socketObjList = new ArrayList<>();
+    private HashMap<String, Boolean> connectedSockets;
+
     public MainViewModel(@NonNull Application application) {
         super(application);
         commandRunnable = new CommandRunnable();
+        connectedSockets = ConnectedStatus.connectedSockets;
     }
 
-    public void startDataGathering(int whichView){
-        viewFlag = whichView;
-        List<SocketObj> socketObjs = null;
-        switch (whichView) {
-            case Filters.FLAG_MAIN:
-                socketObjs = Arrays.asList(
-                        new SocketObj(Sockets.SPEED_SOCKET, Filters.SPEED_FILTER),
-                        new SocketObj(Sockets.BATTERY_SOCKET, Filters.BATTERY_FILTER)
-                );
-                break;
-            case Filters.FLAG_VIDEO:
-                socketObjs = Arrays.asList(
-                        new SocketObj(Sockets.IMAGE_SOCKET, Filters.IMAGE_FILTER)
-                );
-                break;
-
-        }
+    public void startDataGathering(List<SocketObj> socketObjs){
+        socketObjList = socketObjs;
         createSubSockets(socketObjs);
         startSubSockets();
     }
@@ -82,7 +78,7 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
 
     private void threadExists(String socketName){
         for (SubscriberRunnable runnable : runningProcesses) {
-            if(runnable.socketName.equals(socketName)){
+            if (runnable.socketName.equals(socketName)) {
                 runnable.killThread();
                 runningProcesses.remove(runnable);
             }
@@ -93,35 +89,51 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
         for (SubscriberRunnable runnable : runningProcesses) {
             runnable.killThread();
         }
-        startDataGathering(viewFlag);
+        startDataGathering(socketObjList);
     }
 
     @Override
     public void callback(String socketType, byte[] data) {
-        switch (socketType){
-            case Sockets.IMAGE_SOCKET:
-                Bitmap bitmap = ByteConverter.image(data);
-                getImage().setValue(bitmap);
-                break;
-            case Sockets.BATTERY_SOCKET:
-                BatteryObj batteryObj = ByteConverter.battery(data);
-                battery.setValue(batteryObj);
-                break;
-            case Sockets.COMPASS_SOCKET:
-                ByteConverter.compass(data);
-                break;
-            case Sockets.LIDAR_SOCKET:
-                ByteConverter.lidar(data);
-                break;
-            case Sockets.SONAR_SOCKET:
-                ByteConverter.sonar(data);
-                break;
-            case Sockets.SPEED_SOCKET:
-                WheelSpeedObj speedObj = ByteConverter.speed(data);
-                speed.setValue(speedObj);
-                break;
-            default:
-                break;
+        boolean connected = data != Filters.NO_CONNECTION;
+        setConnectedSockets(socketType, connected);
+        if (connected){
+            switch (socketType) {
+                case Sockets.IMAGE_SOCKET_STRING:
+                    Bitmap bitmap = ByteConverter.image(data);
+                    getImage().setValue(bitmap);
+                    break;
+                case Sockets.BATTERY_SOCKET_STRING:
+                    BatteryObj batteryObj = ByteConverter.battery(data);
+                    battery.setValue(batteryObj);
+                    break;
+                case Sockets.COMPASS_SOCKET_STRING:
+                    int compa = ByteConverter.compass(data);
+                    compass.setValue(compa);
+                    break;
+                case Sockets.LIDAR_SOCKET_STRING:
+                    LidarObj lidarObj = ByteConverter.lidar(data);
+                    lidar.setValue(lidarObj);
+                    break;
+                case Sockets.SONAR_SOCKET_STRING:
+                    SonarObj sonarObj = ByteConverter.sonar(data);
+                    sonar.setValue(sonarObj);
+                    break;
+                case Sockets.SPEED_SOCKET_STRING:
+                    WheelSpeedObj speedObj = ByteConverter.speed(data);
+                    speed.setValue(speedObj);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void setConnectedSockets(String socketName, boolean connected) {
+        ConnectedSocketObj connectedSocketObj = new ConnectedSocketObj(socketName, connected);
+        boolean currentStatus = connectedSockets.get(socketName);
+        if (currentStatus != connected){
+            connectedSockets.put(socketName, connected);
+            connectedSocket.setValue(connectedSocketObj);
         }
     }
 
@@ -133,17 +145,39 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
     }
 
     public MutableLiveData<BatteryObj> getBattery() {
-        if (battery == null) {
+        if (battery == null)
             battery = new MutableLiveData<BatteryObj>();
-        }
         return battery;
     }
 
     public MutableLiveData<Bitmap> getImage() {
-        if (image == null) {
+        if (image == null)
             image = new MutableLiveData<Bitmap>();
-        }
         return image;
+    }
+
+    public MutableLiveData<Integer> getCompass() {
+        if (compass == null)
+            compass = new MutableLiveData<>();
+        return compass;
+    }
+
+    public MutableLiveData<LidarObj> getLidar() {
+        if (lidar == null)
+            lidar = new MutableLiveData<>();
+        return lidar;
+    }
+
+    public MutableLiveData<SonarObj> getSonar() {
+        if (sonar == null)
+            lidar = new MutableLiveData<>();
+        return sonar;
+    }
+
+    public MutableLiveData<ConnectedSocketObj> getConnectedSockets() {
+        if (connectedSocket == null)
+            connectedSocket = new MutableLiveData<>();
+        return connectedSocket;
     }
 
     public void connectToIp(String ip){
@@ -170,5 +204,11 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
 
     public void killCommandThread(){
         commandRunnable.killThread();
+    }
+
+    public void killSubscriberThreads(){
+        for (SubscriberRunnable subRunnable : runningProcesses) {
+            subRunnable.killThread();
+        }
     }
 }

@@ -4,15 +4,24 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.dervis.autonomous.CarRest;
+import com.example.dervis.autonomous.Constants.Commands;
 import com.example.dervis.autonomous.Constants.Filters;
+import com.example.dervis.autonomous.Constants.SocketObjects;
+import com.example.dervis.autonomous.Helpers.ResourceGetter;
 import com.example.dervis.autonomous.R;
 import com.example.dervis.autonomous.ViewModels.MainViewModel;
 
@@ -33,20 +42,25 @@ public class VideoActivity extends AppCompatActivity {
     /**
      * turn rate
      */
-    public int turnRate;
+    public short turnRate;
 
     /**
      * speed
      */
-    public int speed;
+    public short speed;
 
     public boolean carOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        carStream = findViewById(R.id.carGoggle);
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.startDataGathering(SocketObjects.VIDEO_SOCKETOBJ_LIST);
+        viewModel.getImage().observe(this, imageObserver);
+        viewModel.startCommandThread();
+
         JoystickView joystick = findViewById(R.id.joyStick);
         joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
             long lastCommandTime = 0;
@@ -56,20 +70,15 @@ public class VideoActivity extends AppCompatActivity {
                 long deltaTime = time - lastCommandTime;
                 if(deltaTime > 250 || (angle == 0 && strength ==0)){
                     int str = strength * 2; //maxspeed 200
-                    turnRate = (int) (str * (0-Math.cos(Math.toRadians(angle))));
-                    speed = (int) (str * Math.sin(Math.toRadians(angle)));
-                    viewModel.addCommand(new byte[] {(byte) Filters.CMD_SPEED, (byte) Filters.CAR_SPD, (byte) speed});
-                    viewModel.addCommand(new byte[] {(byte) Filters.CMD_SPEED, (byte) Filters.TURN_SPD, (byte) turnRate});
+                    turnRate = (short) (str * (0-Math.cos(Math.toRadians(angle))));
+                    speed = (short) (str * Math.sin(Math.toRadians(angle)));
+                    viewModel.addCommand(Commands.speedCommand(speed));
+                    viewModel.addCommand(Commands.turnSpeedCommand(turnRate));
                     lastCommandTime = time;
+                    Log.d("DELTATIME", "onMove: " + deltaTime +" speed: " + speed + " turnRate: " + turnRate);
                 }
             }
         });
-
-        carStream = findViewById(R.id.carGoggle);
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.startDataGathering(Filters.FLAG_VIDEO);
-        viewModel.getImage().observe(this, imageObserver);
-        viewModel.startCommandThread();
     }
 
     /**
@@ -83,40 +92,35 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     public void clickedOnOff(View view){
+        String buttonText = carOn ? "ON" : "OFF";
+        Drawable buttonDrawable = carOn ? ResourceGetter.getDrawable(R.drawable.round_button) : ResourceGetter.getDrawable(R.drawable.round_button_red);
+        Button button = (Button) view;
+        button.setText(buttonText);
+        button.setBackground(buttonDrawable);
+
         if (!carOn){
-            viewModel.addCommand(new byte[] {(byte) Filters.CMD_SET_PARAMS, (byte) Filters.ARM_MOTORS});
+            viewModel.addCommand(Commands.ARM_MOTORS);
             carOn = true;
         }else{
-            viewModel.addCommand(new byte[] {(byte) Filters.CMD_SET_PARAMS, (byte) Filters.DISARM_MOTORS});
+            viewModel.addCommand(Commands.DISARM_MOTORS);
             carOn = false;
         }
     }
 
-    /**
-     * stops everything in this class, calls on stopRepeatingTask.
-     */
-    protected void onDestroy() {
-        super.onDestroy();
+    public void clickedHazard(View view){
+        viewModel.addCommand(Commands.HAZARD_LIGHT);
     }
 
-    /**
-     * called on when entered this activity, calls on startRepeatingTask.
-     */
-    protected void onStart() {
-        super.onStart();
-
+    public void clickedHorn(View view){
+        viewModel.addCommand(Commands.HONK_HORN);
     }
 
-    /**
-     * called on when application is in background
-     */
-    protected void onPause(){
-        super.onPause();
+    public void clickedRightLight(View view){
+        viewModel.addCommand(Commands.RIGHT_TURN_LIGHT);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    public void clickedLeftLight(View view){
+        viewModel.addCommand(Commands.LEFT_TURN_LIGHT);
     }
 
     // Create the observer which updates the UI.
@@ -127,4 +131,12 @@ public class VideoActivity extends AppCompatActivity {
             carStream.setImageBitmap(bitmap);
         }
     };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.killSubscriberThreads();
+        viewModel.killCommandThread();
+    }
+
 }

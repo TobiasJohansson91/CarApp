@@ -45,15 +45,126 @@
         custom:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/onOffButtonVideo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_button_red"
+        android:onClick="clickedOnOff"
+        android:text="OFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/joyStick" />
+
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:onClick="clickedOnOff"
-        android:text="On/Off"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/onOffButtonVideo"
+        app:layout_constraintStart_toEndOf="@+id/rightTurnLightVideo">
+
+        <ImageView
+            android:id="@+id/batteryVideoImageView"
+            android:layout_width="104dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_main_battery" />
+
+        <ImageView
+            android:id="@+id/batteryStatusVideo"
+            android:layout_width="88dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="11dp"
+            app:layout_constraintBottom_toBottomOf="@+id/batteryVideoImageView"
+            app:layout_constraintEnd_toEndOf="@+id/batteryVideoImageView"
+            app:layout_constraintTop_toTopOf="@+id/batteryVideoImageView"
+            app:srcCompat="@android:color/holo_green_dark" />
+
+        <Button
+            android:id="@+id/speedometerVideo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/speed"
+            android:text="400"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/batteryVideoImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/hazardButtonVideo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/round_button_orange"
+        android:onClick="clickedHazard"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/icon_hazard" />
+
+    <ImageButton
+        android:id="@+id/hornButtonVideo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_button_orange"
+        android:onClick="clickedHorn"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@+id/hazardButtonVideo"
+        app:layout_constraintStart_toStartOf="@+id/hazardButtonVideo"
+        app:layout_constraintTop_toBottomOf="@+id/hazardButtonVideo"
+        app:srcCompat="@drawable/icon_horn" />
+
+    <ImageButton
+        android:id="@+id/rightTurnLightVideo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_button_orange"
+        android:onClick="clickedRightLight"
+        android:rotation="180"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/leftTurnlLightVideo"
+        app:srcCompat="@drawable/icon_turn_signal" />
+
+
+    <ImageButton
+        android:id="@+id/leftTurnlLightVideo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/round_button_orange"
+        android:onClick="clickedLeftLight"
+        app:layout_constraintBottom_toBottomOf="@+id/rightTurnLightVideo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rightTurnLightVideo"
+        app:srcCompat="@drawable/icon_turn_signal" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
 </android.support.constraint.ConstraintLayout>

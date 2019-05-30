@@ -1,9 +1,13 @@
 package com.example.dervis.autonomous.CarRequest;
 
+import android.util.Log;
+
 import com.example.dervis.autonomous.Constants.IPAdresses;
 
 import org.jeromq.ZMQ;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 public class CommandRunnable implements Runnable {
@@ -15,10 +19,10 @@ public class CommandRunnable implements Runnable {
     }
 
     public synchronized void addCommand(byte[] command){
-        if (command.length == 3){
-            command = new byte[]{command[0], command[1], (byte) 9, (byte) 0, (byte) 0, command[2], (byte) 0x01 };
+        if (command.length == 4){
+            command = new byte[]{command[0], command[1], (byte) 9, (byte) 0, command[2], command[3], (byte) 0x01 };
             commandQueue.add(command);
-        }else {
+        } else {
             command = new byte[]{command[0], command[1], (byte) 9, (byte) 0};
             commandQueue.add(command);
         }

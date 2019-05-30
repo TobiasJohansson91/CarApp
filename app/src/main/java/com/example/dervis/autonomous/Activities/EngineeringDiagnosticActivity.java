@@ -1,5 +1,8 @@
 package com.example.dervis.autonomous.Activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,14 +14,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dervis.autonomous.Constants.ListItems;
+import com.example.dervis.autonomous.Constants.SocketObjects;
 import com.example.dervis.autonomous.Helpers.GsonConv;
 import com.example.dervis.autonomous.Helpers.ResourceGetter;
+import com.example.dervis.autonomous.Objects.ConnectedSocketObj;
 import com.example.dervis.autonomous.Objects.ListObjIcon;
 import com.example.dervis.autonomous.R;
 import com.example.dervis.autonomous.RecyclerView.RecyclerListAdapterDiagnostic;
+import com.example.dervis.autonomous.ViewModels.MainViewModel;
+
+import java.util.HashMap;
 
 public class EngineeringDiagnosticActivity extends AppCompatActivity {
 
+    MainViewModel viewModel;
     RecyclerView listView;
     RecyclerListAdapterDiagnostic listAdapter;
 
@@ -35,6 +44,10 @@ public class EngineeringDiagnosticActivity extends AppCompatActivity {
         listView.setLayoutManager(mLayoutManager);
         listView.setItemAnimator(new DefaultItemAnimator());
         listView.setAdapter(listAdapter);
+
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getConnectedSockets().observe(this, connectedSocketObjObserver);
+        viewModel.startDataGathering(SocketObjects.ENGINEERING_DIAGNOSTIC_SOCKETOBJ_LIST);
     }
 
     private void setHeaderText() {
@@ -52,5 +65,18 @@ public class EngineeringDiagnosticActivity extends AppCompatActivity {
     public void clickBackArrow(View view) {
         finish();
         overridePendingTransition(R.anim.enter_back_anim, R.anim.exit_back_anim);
+    }
+
+    final Observer<ConnectedSocketObj> connectedSocketObjObserver = new Observer<ConnectedSocketObj>() {
+        @Override
+        public void onChanged(@Nullable ConnectedSocketObj connectedSocketObj) {
+            listAdapter.updateView(connectedSocketObj);
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        viewModel.killSubscriberThreads();
     }
 }

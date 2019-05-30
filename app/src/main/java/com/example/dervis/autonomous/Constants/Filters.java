@@ -32,6 +32,18 @@ public class Filters {
     public static final int SENS_P_BATT = 0x09; //int16 mVolt, int16 mA
     public static final int SENS_SONAR = 0x0A; //int16 mm, int8 id
 
+    public static final int SENS_TURNLIGHTS = 0x0B;  //20 hazard on / 13 left on / 14 right on
+    public static final int SENS_ODOMETER = 0x0C;  //int16 m
+    public static final int SENS_TRIPMETER = 0x0D;  //int16 m
+    public static final int HAZARDLIGHT = 20;
+    public static final int LEFT_TURNLIGHT = 13;
+    public static final int RIGHT_TURNLIGHT = 14;
+
+    public static final int CMD_TO_PI = 0x50;
+    public static final int SET_TURNLIGHT = 0x05;
+    public static final int HONKHORN = 0x06;
+    public static final int RESET_TRIPMETER = 0x07;
+
     public static final byte[] IMAGE_FILTER = new byte[]{(byte) SENS, (byte) SENS_IMAGE};
     public static final byte[] LIDAR_FILTER = new byte[]{(byte) SENS, (byte) SENS_LIDAR};
     public static final byte[] SONAR_FILTER = new byte[]{(byte) SENS, (byte) SENS_SONAR};
@@ -41,6 +53,5 @@ public class Filters {
 
     public static final byte[] OK_MESSAGE = new byte[]{(byte) 0, (byte) R_OK};
 
-    public static final int FLAG_MAIN = 112;
-    public static final int FLAG_VIDEO = 113;
+    public static final byte[] NO_CONNECTION = "EMPTY".getBytes();
 }

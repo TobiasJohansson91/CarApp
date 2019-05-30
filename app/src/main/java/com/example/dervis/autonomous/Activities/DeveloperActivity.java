@@ -1,6 +1,8 @@
 package com.example.dervis.autonomous.Activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -8,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +21,7 @@ import com.example.dervis.autonomous.Helpers.ResourceGetter;
 import com.example.dervis.autonomous.Objects.ListObjIcon;
 import com.example.dervis.autonomous.R;
 import com.example.dervis.autonomous.RecyclerView.RecyclerListAdapter;
+import com.example.dervis.autonomous.ViewModels.MainViewModel;
 
 /**
  * this class shows errors (not used at the moment)
@@ -26,12 +30,14 @@ public class DeveloperActivity extends AppCompatActivity implements RecyclerList
 
     RecyclerView listView;
     RecyclerListAdapter listAdapter;
+    MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_developer);
         setHeaderText();
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         findViewById(R.id.connectCarImageButton).setVisibility(View.VISIBLE);
         listView = findViewById(R.id.recyclerList);
         listAdapter = new RecyclerListAdapter(this, ListItems.objListEngineering);
@@ -80,6 +86,20 @@ public class DeveloperActivity extends AppCompatActivity implements RecyclerList
     }
 
     public void clickConnectCar(View view){
+        final View connectionView = getLayoutInflater().inflate(R.layout.server_connect, null);
+        AlertDialog.Builder connection = new AlertDialog.Builder(this);
+        Button connectNowButton = connectionView.findViewById(R.id.connectNowButton);
+        connection.setView(connectionView);
+        final AlertDialog dialog = connection.create();
 
+        connectNowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = ((TextView) connectionView.findViewById(R.id.ipAddressEditText)).getText().toString();
+                dialog.cancel();
+                viewModel.connectToIp(ip);
+            }
+        });
+        dialog.show();
     }
 }

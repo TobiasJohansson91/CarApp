@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,22 +12,15 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.dervis.autonomous.Constants.Filters;
 import com.example.dervis.autonomous.Constants.ListIDs;
 import com.example.dervis.autonomous.Constants.ListItems;
+import com.example.dervis.autonomous.Constants.SocketObjects;
 import com.example.dervis.autonomous.Helpers.GsonConv;
-import com.example.dervis.autonomous.Helpers.ResourceGetter;
 import com.example.dervis.autonomous.Objects.BatteryObj;
 import com.example.dervis.autonomous.Objects.ListObjIcon;
-import com.example.dervis.autonomous.Objects.WheelSpeedObj;
 import com.example.dervis.autonomous.R;
 import com.example.dervis.autonomous.RecyclerView.RecyclerListAdapter;
 import com.example.dervis.autonomous.ViewModels.MainViewModel;
@@ -42,19 +34,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
 
     int maxWidthBattery;
     int currentWidthBattery;
-    TextView currentSpeed;
     ImageView batteryStatus;
-    ImageView lockImg;
-    Boolean locked;
-    Boolean lightsOn = false;
-    ImageView stopImg;
-    ImageView lightsImg;
-    Button connectButton;
-    Animation animAlpha;
-    String ip;
-    EditText ipNr;
-    View connectionView;
-
     MainViewModel viewModel;
     RecyclerView listView;
     RecyclerListAdapter listAdapter;
@@ -67,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
         ImageButton backButton = findViewById(R.id.backArrowBtn);
         backButton.setEnabled(false);
         backButton.setVisibility(View.GONE);
-        animAlpha = AnimationUtils.loadAnimation(this, R.anim.alpha);
         batteryStatus = findViewById(R.id.batteryStatus);
         maxWidthBattery = batteryStatus.getLayoutParams().width;
         currentWidthBattery = maxWidthBattery;
@@ -81,85 +60,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
         listView.setAdapter(listAdapter);
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.startDataGathering(Filters.FLAG_MAIN);
+        viewModel.startDataGathering(SocketObjects.MAIN_SOCKETOBJ_LIST);
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        viewModel.getSpeed().observe(this, speedObserver);
         viewModel.getBattery().observe(this, batteryObserver);
     }
 
-    /**
-     * opens diagnostics activity and calls on stopsRepeatingTask
-     * @param view this view
-     *
-     */
-    public void diagActivity(View view) {
-        startActivity(new Intent(MainActivity.this, DiagnosticsActivity.class));
-        overridePendingTransition(R.anim.enter_anim, R.anim.exit_anim);
-    }
-
-    /**
-     * opens Video activity and calls on stopsRepeatingTask
-     * @param view this view
-     *
-     */
-    public void remoteControlClick(View view) {
-        startActivity(new Intent(MainActivity.this, VideoActivity.class));
-        overridePendingTransition(R.anim.enter_anim, R.anim.exit_anim);
-    }
-
-    /**
-     * stops everything in this class
-     */
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    /**
-     * called on when entered this activity, calls on startRepeatingTask
-     */
-    protected void onStart() {
-        super.onStart();
-    }
-
-    protected void onPause(){
-        super.onPause();
-    }
-
-    /**
-     * changes the lock icon on clicked and calls server to change status of lock
-     * @param view view
-     */
-    public void lockClicked(View view) {
-        lockImg.startAnimation(animAlpha);
-        if(locked) {
-            lockImg.setImageResource(R.drawable.unlocked);
-            locked = false;
-        } else {
-            lockImg.setImageResource(R.drawable.locked);
-            locked = true;
-        }
-    }
-
-    /**
-     * opens location activity and calls on stopRepeatingTask
-     * @param view view
-     */
-    public void locationClicked(View view) {
-        startActivity(new Intent(MainActivity.this, LocationActivity.class));
-        overridePendingTransition(R.anim.enter_anim, R.anim.exit_anim);
-    }
-
-    /**
-     * stops the "engine" to the car, and changes the lock icon
-     */
-    public void emergencyStopClick(View view) {
-        stopImg.startAnimation(animAlpha);
-        lockImg.setImageResource(R.drawable.locked);
-        locked = true;
-    }
-    /**
-     * calls the server and changes battery icon based on how much voltage is left
-     */
     public void drawBattery(BatteryObj batteryObj) {
         double minVoltage = 0;
         double maxVoltage = 17000;
@@ -183,60 +88,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
             batteryStatus.setBackgroundColor((Color.parseColor("#90CC42")));
         }
     }
-
-    /**
-     * calls server to change status of lights
-     * @param view view
-     */
-    public void lightsClicked(View view) {
-        lightsImg.startAnimation(animAlpha);
-
-        if (lightsOn) {
-            lightsImg.setAlpha(0.1f);
-            lightsOn = false;
-        } else {
-            lightsImg.setAlpha(1f);
-            lightsOn = true;
-        }
-    }
-
-    /**
-     * Opens a dialog view and ask to enter ip address if you get a response code 200 connection is
-     * established else it fails.
-     * @param view connect
-     */
-    public void connectOnClicked(View view) {
-        connectionView = getLayoutInflater().inflate(R.layout.server_connect, null);
-        AlertDialog.Builder connection = new AlertDialog.Builder(this);
-        Button connectNowButton = connectionView.findViewById(R.id.connectNowButton);
-        connection.setView(connectionView);
-        final AlertDialog dialog = connection.create();
-        ipNr = connectionView.findViewById(R.id.ipAddressEditText);
-
-        if(true) {
-            connectNowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ip = ipNr.getText().toString();
-                    dialog.cancel();
-                    viewModel.connectToIp(ip);
-                }
-            });
-            dialog.show();
-        }else {
-            connectButton.setText("Connect");
-            currentSpeed.setText("0");
-        }
-    }
-
-    // Create the observer which updates the UI.
-    final Observer<WheelSpeedObj> speedObserver = new Observer<WheelSpeedObj>() {
-        @Override
-        public void onChanged(@Nullable final WheelSpeedObj wheelSpeedObj) {
-            // Update the UI, in this case, a TextView.
-            currentSpeed.setText(wheelSpeedObj.totalSpeed);
-        }
-    };
 
     // Create the observer which updates the UI.
     final Observer<BatteryObj> batteryObserver = new Observer<BatteryObj>() {
@@ -283,4 +134,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
         intent.putExtra(HEADER, json);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.killSubscriberThreads();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.startDataGathering(SocketObjects.MAIN_SOCKETOBJ_LIST);
+    }
 }

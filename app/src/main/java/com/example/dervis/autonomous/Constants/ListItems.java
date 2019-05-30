@@ -3,6 +3,7 @@ package com.example.dervis.autonomous.Constants;
 import com.example.dervis.autonomous.Helpers.ResourceGetter;
 import com.example.dervis.autonomous.Objects.ListObj;
 import com.example.dervis.autonomous.Objects.ListObjControl;
+import com.example.dervis.autonomous.Objects.ListObjDiagnostics;
 import com.example.dervis.autonomous.Objects.ListObjIcon;
 import com.example.dervis.autonomous.R;
 
@@ -56,26 +57,26 @@ public class ListItems {
     public static final List<ListObjControl> objListControl = Arrays.asList(POWER, DOORLOCK, INDICATORS, HORN);
 
     //Diagnostics activity list
-    public static final ListObjIcon BRAKE_FLUID = new ListObjIcon(620, "Brake fluid", "", ResourceGetter.getDrawable(R.drawable.icon_brake_fluid), R.drawable.icon_brake_fluid);
-    public static final ListObjIcon TIRE = new ListObjIcon(621, "Tire", "", ResourceGetter.getDrawable(R.drawable.icon_tire_warning), R.drawable.icon_tire_warning);
-    public static final ListObjIcon COOLANT = new ListObjIcon(622, "Coolant", "", ResourceGetter.getDrawable(R.drawable.icon_coolant), R.drawable.icon_coolant);
-    public static final ListObjIcon LIGHTS = new ListObjIcon(623, "Lights", "", ResourceGetter.getDrawable(R.drawable.icon_light), R.drawable.icon_light);
-    public static final ListObjIcon OIL = new ListObjIcon(624, "Oil", "", ResourceGetter.getDrawable(R.drawable.icon_oil), R.drawable.icon_oil);
-    public static final ListObjIcon SERVICE = new ListObjIcon(625, "Service", "", ResourceGetter.getDrawable(R.drawable.settings), R.drawable.settings);
-    public static final ListObjIcon WASHER_FLUID = new ListObjIcon(626, "Washer fluid", "", ResourceGetter.getDrawable(R.drawable.icon_windshield_washer), R.drawable.icon_windshield_washer);
+    public static final ListObjDiagnostics BRAKE_FLUID = new ListObjDiagnostics("Brake fluid", ResourceGetter.getDrawable(R.drawable.icon_brake_fluid), R.drawable.icon_brake_fluid, null);
+    public static final ListObjDiagnostics TIRE = new ListObjDiagnostics("Tire", ResourceGetter.getDrawable(R.drawable.icon_tire_warning), R.drawable.icon_tire_warning, null);
+    public static final ListObjDiagnostics COOLANT = new ListObjDiagnostics("Coolant", ResourceGetter.getDrawable(R.drawable.icon_coolant), R.drawable.icon_coolant, null);
+    public static final ListObjDiagnostics LIGHTS = new ListObjDiagnostics("Lights", ResourceGetter.getDrawable(R.drawable.icon_light), R.drawable.icon_light, null);
+    public static final ListObjDiagnostics OIL = new ListObjDiagnostics("Oil", ResourceGetter.getDrawable(R.drawable.icon_oil), R.drawable.icon_oil, null);
+    public static final ListObjDiagnostics SERVICE = new ListObjDiagnostics( "Service", ResourceGetter.getDrawable(R.drawable.settings), R.drawable.settings, null);
+    public static final ListObjDiagnostics WASHER_FLUID = new ListObjDiagnostics( "Washer fluid", ResourceGetter.getDrawable(R.drawable.icon_windshield_washer), R.drawable.icon_windshield_washer, null);
 
-    public static final List<ListObjIcon> objListDiagnostic = Arrays.asList(BRAKE_FLUID, TIRE, COOLANT, LIGHTS, OIL, SERVICE, WASHER_FLUID);
+    public static final List<ListObjDiagnostics> objListDiagnostic = Arrays.asList(BRAKE_FLUID, TIRE, COOLANT, LIGHTS, OIL, SERVICE, WASHER_FLUID);
 
 
     //Engineering diagnostics activity list
-    public static final ListObjIcon COMPASS = new ListObjIcon(720, "Compass", "", ResourceGetter.getDrawable(R.drawable.icon_compass), R.drawable.icon_compass);
-    public static final ListObjIcon LIDAR = new ListObjIcon(721, "Lidar", "", ResourceGetter.getDrawable(R.drawable.icon_lidar), R.drawable.icon_lidar);
-    public static final ListObjIcon SONAR = new ListObjIcon(722, "Sonar", "", ResourceGetter.getDrawable(R.drawable.icon_sonar), R.drawable.icon_sonar);
-    public static final ListObjIcon CAMERA = new ListObjIcon(723, "Camera", "", ResourceGetter.getDrawable(R.drawable.icon_camera), R.drawable.icon_camera);
-    public static final ListObjIcon LIGHTS_ENG = new ListObjIcon(724, "Lights", "", ResourceGetter.getDrawable(R.drawable.icon_light), R.drawable.icon_light);
-    public static final ListObjIcon BATTERY_ENG = new ListObjIcon(725, "Battery", "", ResourceGetter.getDrawable(R.drawable.icon_battery), R.drawable.icon_battery);
+    public static final ListObjDiagnostics COMPASS = new ListObjDiagnostics("Compass", ResourceGetter.getDrawable(R.drawable.icon_compass), R.drawable.icon_compass, Sockets.COMPASS_SOCKET_STRING);
+    public static final ListObjDiagnostics LIDAR = new ListObjDiagnostics("Lidar", ResourceGetter.getDrawable(R.drawable.icon_lidar), R.drawable.icon_lidar, Sockets.LIDAR_SOCKET_STRING);
+    public static final ListObjDiagnostics SONAR = new ListObjDiagnostics("Sonar", ResourceGetter.getDrawable(R.drawable.icon_sonar), R.drawable.icon_sonar, Sockets.SONAR_SOCKET_STRING);
+    public static final ListObjDiagnostics CAMERA = new ListObjDiagnostics("Camera", ResourceGetter.getDrawable(R.drawable.icon_camera), R.drawable.icon_camera, Sockets.IMAGE_SOCKET_STRING);
+    public static final ListObjDiagnostics LIGHTS_ENG = new ListObjDiagnostics("Lights", ResourceGetter.getDrawable(R.drawable.icon_light), R.drawable.icon_light, Sockets.LIGHT_SOCKET_STRING);
+    public static final ListObjDiagnostics BATTERY_ENG = new ListObjDiagnostics("Battery", ResourceGetter.getDrawable(R.drawable.icon_battery), R.drawable.icon_battery, Sockets.BATTERY_SOCKET_STRING);
 
-    public static final List<ListObjIcon> objListEngineeringDiagnostic = Arrays.asList(COMPASS, LIDAR, SONAR, CAMERA, LIGHTS_ENG, BATTERY_ENG);
+    public static final List<ListObjDiagnostics> objListEngineeringDiagnostic = Arrays.asList(COMPASS, LIDAR, SONAR, CAMERA, LIGHTS_ENG, BATTERY_ENG);
 
 
 }

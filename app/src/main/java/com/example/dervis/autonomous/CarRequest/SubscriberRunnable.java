@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.dervis.autonomous.Constants.Filters;
 import com.example.dervis.autonomous.Constants.IPAdresses;
 import com.example.dervis.autonomous.Constants.Sockets;
 
@@ -30,10 +31,13 @@ public class SubscriberRunnable implements Runnable {
         this.socketCallback = socketCallback;
     }
 
-    public void killThread(){
+    public synchronized void killThread(){
         isGoing = false;
     }
 
+    public synchronized boolean getIsGoing() {
+        return isGoing;
+    }
     @Override
     public void run() {
         socket.connect("tcp://" + IPAdresses.connectedIp + ":5556");
@@ -42,12 +46,14 @@ public class SubscriberRunnable implements Runnable {
             Log.d("Hello", "rununug in runnable: " + data + " " + socketName);
             if (data != null)
                 mainHandler.obtainMessage(1, data).sendToTarget();
+            else
+                mainHandler.obtainMessage(1, Filters.NO_CONNECTION).sendToTarget();
             sleep();
         }
     }
 
     private void sleep(){
-        int sleepTime = socketName.equals(Sockets.IMAGE_SOCKET) ? 50 : 2000;
+        int sleepTime = socketName.equals(Sockets.IMAGE_SOCKET_STRING) ? 50 : 2000;
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
