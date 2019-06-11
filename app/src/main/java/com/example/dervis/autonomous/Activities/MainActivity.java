@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.dervis.autonomous.Constants.ListIDs;
 import com.example.dervis.autonomous.Constants.ListItems;
@@ -87,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerListAdapt
         } else {
             batteryStatus.setBackgroundColor((Color.parseColor("#90CC42")));
         }
+        int procentBattery = (int) batteryLeft*100;
+        TextView batteryProcent = findViewById(R.id.batteryProcentTextView);
+        batteryProcent.setText("" + procentBattery + "%");
     }
 
     // Create the observer which updates the UI.

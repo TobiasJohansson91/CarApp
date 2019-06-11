@@ -1,5 +1,6 @@
 package com.example.dervis.autonomous.RecyclerView;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.dervis.autonomous.Constants.ListItems;
 import com.example.dervis.autonomous.Objects.ListObjControl;
 import com.example.dervis.autonomous.R;
 import com.suke.widget.SwitchButton;
@@ -36,6 +38,7 @@ public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerLis
         holder.titleTV.setText(listObj.title);
         holder.descriptionTV.setText(listObj.getDescription());
         holder.onOffSB.setChecked(listObj.isSwitchOn());
+        holder.onOffSB.setEnabled(false);
     }
 
     @Override
@@ -43,11 +46,12 @@ public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerLis
         return listObjControls.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements SwitchButton.OnClickListener, SwitchButton.OnCheckedChangeListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements SwitchButton.OnClickListener {
         ImageView iconIV;
         TextView titleTV;
         TextView descriptionTV;
         SwitchButton onOffSB;
+        final Handler handler = new Handler();
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -55,24 +59,31 @@ public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerLis
             titleTV = itemView.findViewById(R.id.diagnosticTextView);
             descriptionTV = itemView.findViewById(R.id.descriptionControlTextView);
             onOffSB = itemView.findViewById(R.id.controlSwitchButton);
-            onOffSB.setOnCheckedChangeListener(this);
-            onOffSB.setOnTouchListener(null);
-        }
-
-        @Override
-        public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-            ListObjControl listObj = listObjControls.get(getAdapterPosition());
-            if(isChecked != listObj.isSwitchOn()) {
-                listObj.setSwitchOn(isChecked);
-                notifyItemChanged(getAdapterPosition());
-            }
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             ListObjControl listObj = listObjControls.get(getAdapterPosition());
-            boolean isOn = !listObj.isSwitchOn();
-            listObj.setSwitchOn(isOn);
+            boolean isChecked = !listObj.isSwitchOn();
+            listObj.setSwitchOn(isChecked);
+            if (listObj.id == ListItems.HORN.id)
+                automaticTurnOff(listObj);
+            dataChanged();
+        }
+
+        private void automaticTurnOff(final ListObjControl listObj){
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    listObj.setSwitchOn(false);
+                    notifyItemChanged(getAdapterPosition());
+                }
+            }, 300);
+        }
+
+        private void dataChanged(){
+            onOffSB.setEnabled(true);
             notifyItemChanged(getAdapterPosition());
         }
     }

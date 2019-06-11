@@ -16,12 +16,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.dervis.autonomous.CarRest;
 import com.example.dervis.autonomous.Constants.Commands;
 import com.example.dervis.autonomous.Constants.Filters;
 import com.example.dervis.autonomous.Constants.SocketObjects;
 import com.example.dervis.autonomous.Helpers.ResourceGetter;
+import com.example.dervis.autonomous.Objects.BatteryObj;
+import com.example.dervis.autonomous.Objects.WheelSpeedObj;
 import com.example.dervis.autonomous.R;
 import com.example.dervis.autonomous.ViewModels.MainViewModel;
 
@@ -34,19 +37,12 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
  * this class handles the camera display settings and steering
  */
 public class VideoActivity extends AppCompatActivity {
-    CarRest car = new CarRest();
-    ExecutorService pool = Executors.newCachedThreadPool();
     ImageView carStream;
     MainViewModel viewModel;
-
-    /**
-     * turn rate
-     */
+    ImageView batteryStatus;
+    int maxWidthBattery;
+    int currentWidthBattery;
     public short turnRate;
-
-    /**
-     * speed
-     */
     public short speed;
 
     public boolean carOn = false;
@@ -59,7 +55,13 @@ public class VideoActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.startDataGathering(SocketObjects.VIDEO_SOCKETOBJ_LIST);
         viewModel.getImage().observe(this, imageObserver);
+        viewModel.getSpeed().observe(this, speedObserver);
+        viewModel.getBattery().observe(this, batteryObserver);
         viewModel.startCommandThread();
+
+        batteryStatus = findViewById(R.id.batteryStatusVideo);
+        maxWidthBattery = batteryStatus.getLayoutParams().width;
+        currentWidthBattery = maxWidthBattery;
 
         JoystickView joystick = findViewById(R.id.joyStick);
         joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
@@ -131,6 +133,47 @@ public class VideoActivity extends AppCompatActivity {
             carStream.setImageBitmap(bitmap);
         }
     };
+
+    final Observer<BatteryObj> batteryObserver = new Observer<BatteryObj>() {
+        @Override
+        public void onChanged(@Nullable BatteryObj batteryObj) {
+            drawBattery(batteryObj);
+        }
+    };
+
+    final Observer<WheelSpeedObj> speedObserver = new Observer<WheelSpeedObj>() {
+        @Override
+        public void onChanged(@Nullable WheelSpeedObj wheelSpeedObj) {
+            ((TextView) findViewById(R.id.speedometerVideo)).setText("" + wheelSpeedObj.totalSpeed + "%");
+        }
+    };
+
+    private void drawBattery(BatteryObj batteryObj) {
+        double minVoltage = 0;
+        double maxVoltage = 17000;
+
+        double batteryLeft = (batteryObj.voltage/(maxVoltage-minVoltage));
+        currentWidthBattery = (int) (maxWidthBattery * batteryLeft);
+
+        batteryStatus.getLayoutParams().width = currentWidthBattery;
+        //voltage.setText(batteryObj.voltage + "V");
+        batteryStatus.requestLayout();
+        float x = batteryStatus.getX();
+        float y = batteryStatus.getY();
+        float width = batteryStatus.getWidth();
+        float height = batteryStatus.getHeight();
+
+        if (batteryLeft < 0.5 && batteryLeft > 0.2) {
+            batteryStatus.setBackgroundColor((Color.parseColor("#fffb1e")));
+        } else if (batteryLeft < 0.2) {
+            batteryStatus.setBackgroundColor((Color.parseColor("#ed3636")));
+        } else {
+            batteryStatus.setBackgroundColor((Color.parseColor("#90CC42")));
+        }
+        int procentBattery = (int) batteryLeft*100;
+        TextView batteryProcent = findViewById(R.id.batteryProcentVideo);
+        batteryProcent.setText("" + procentBattery + "%");
+    }
 
     @Override
     protected void onPause() {

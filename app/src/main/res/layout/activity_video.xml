@@ -91,22 +91,31 @@
             app:layout_constraintTop_toTopOf="@+id/batteryVideoImageView"
             app:srcCompat="@android:color/holo_green_dark" />
 
-        <Button
+        <TextView
             android:id="@+id/speedometerVideo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/speed"
-            android:text="400"
+            android:text="--km/h"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@+id/batteryVideoImageView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/batteryProcentVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--%"
+            app:layout_constraintBottom_toBottomOf="@+id/batteryVideoImageView"
+            app:layout_constraintEnd_toEndOf="@+id/batteryVideoImageView"
+            app:layout_constraintStart_toStartOf="@+id/batteryVideoImageView"
+            app:layout_constraintTop_toTopOf="@+id/batteryVideoImageView" />
     </android.support.constraint.ConstraintLayout>
 
     <ImageButton
