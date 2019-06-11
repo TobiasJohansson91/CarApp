@@ -48,6 +48,8 @@ public class EngineeringDiagnosticActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getConnectedSockets().observe(this, connectedSocketObjObserver);
         viewModel.startDataGathering(SocketObjects.ENGINEERING_DIAGNOSTIC_SOCKETOBJ_LIST);
+
+        viewModel.getUpdateTime().observe(this, timeObserver);
     }
 
     private void setHeaderText() {
@@ -79,4 +81,11 @@ public class EngineeringDiagnosticActivity extends AppCompatActivity {
         super.onStop();
         viewModel.killSubscriberThreads();
     }
+
+    final Observer<String> timeObserver = new Observer<String>() {
+        @Override
+        public void onChanged(@Nullable String s) {
+            ((TextView) findViewById(R.id.timeStampTextView)).setText(s);
+        }
+    };
 }

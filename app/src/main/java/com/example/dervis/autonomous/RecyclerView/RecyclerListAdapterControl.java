@@ -17,10 +17,11 @@ import com.suke.widget.SwitchButton;
 import java.util.List;
 
 public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerListAdapterControl.MyViewHolder> {
-
+    private IItemClick iItemClick;
     private List<ListObjControl> listObjControls;
 
-    public RecyclerListAdapterControl(List<ListObjControl> listObjControls) {
+    public RecyclerListAdapterControl(IItemClick iItemClick, List<ListObjControl> listObjControls) {
+        this.iItemClick = iItemClick;
         this.listObjControls = listObjControls;
     }
 
@@ -70,6 +71,7 @@ public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerLis
             if (listObj.id == ListItems.HORN.id)
                 automaticTurnOff(listObj);
             dataChanged();
+            iItemClick.itemClicked(listObj);
         }
 
         private void automaticTurnOff(final ListObjControl listObj){
@@ -86,5 +88,8 @@ public class RecyclerListAdapterControl extends RecyclerView.Adapter<RecyclerLis
             onOffSB.setEnabled(true);
             notifyItemChanged(getAdapterPosition());
         }
+    }
+    public interface IItemClick {
+        public void itemClicked(ListObjControl listObjControl);
     }
 }

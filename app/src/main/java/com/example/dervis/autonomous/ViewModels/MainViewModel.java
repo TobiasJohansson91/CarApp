@@ -26,8 +26,11 @@ import com.example.dervis.autonomous.Ping;
 
 import org.jeromq.ZMQ;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,7 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
     private MutableLiveData<LidarObj> lidar  = new MutableLiveData<>();
     private MutableLiveData<SonarObj> sonar  = new MutableLiveData<>();
     private MutableLiveData<ConnectedSocketObj> connectedSocket = new MutableLiveData<>();
+    private MutableLiveData<String> updateTime = new MutableLiveData<>();
 
     private ExecutorService threadPool = Executors.newFixedThreadPool(6, Executors.defaultThreadFactory());
     private HashMap<String, ZMQ.Socket> subSockets = new HashMap<>();
@@ -125,6 +129,7 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
                 default:
                     break;
             }
+            setUpdateTime();
         }
     }
 
@@ -180,6 +185,12 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
         return connectedSocket;
     }
 
+    public MutableLiveData<String> getUpdateTime(){
+        if (updateTime == null)
+            updateTime = new MutableLiveData<>();
+        return updateTime;
+    }
+
     public void connectToIp(String ip){
         Ping.ping(ip, this);
     }
@@ -210,5 +221,13 @@ public class MainViewModel extends android.arch.lifecycle.AndroidViewModel imple
         for (SubscriberRunnable subRunnable : runningProcesses) {
             subRunnable.killThread();
         }
+    }
+
+    private void setUpdateTime(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm MMM d");
+        //dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date today = Calendar.getInstance().getTime();
+        String timeStamp = dateFormat.format(today);
+        updateTime.setValue(timeStamp);
     }
 }

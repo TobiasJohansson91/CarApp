@@ -41,9 +41,9 @@
         android:text="Updated:"
         android:textColor="@color/infotivWhite"
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView4"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="@+id/textView4" />
+        app:layout_constraintBottom_toBottomOf="@+id/timeStampTextView"
+        app:layout_constraintEnd_toStartOf="@+id/timeStampTextView"
+        app:layout_constraintTop_toTopOf="@+id/timeStampTextView" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -69,7 +69,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/timeStampTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
